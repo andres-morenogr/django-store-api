@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -83,12 +84,20 @@ WSGI_APPLICATION = 'djangostore.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+DATABASE_USER = os.environ.get("MONGODB_USER", '')
+DATABASE_PASSWORD = os.environ.get("MONGODB_PW", '')
+DATABASE_NAME = ''
+
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': 'test_db_py',
-        'HOST': '127.0.0.1',
-        'PORT': 27017,
+        'NAME': DATABASE_NAME,
+        'CLIENT': {
+            'host': 'mongodb+srv://' + DATABASE_USER + ':'+ DATABASE_PASSWORD +'@cluster0.uoece.mongodb.net/'+ DATABASE_NAME +'?retryWrites=true&w=majority',
+            'username': DATABASE_USER,
+            'password': DATABASE_PASSWORD,
+            'authMechanism': 'SCRAM-SHA-1'
+        }
     }
 }
 
