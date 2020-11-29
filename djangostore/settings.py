@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -33,6 +34,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'rest_framework',
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,12 +46,19 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    # CORS
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = (
+    #'http://localhost:0000',
+)
 
 ROOT_URLCONF = 'djangostore.urls'
 
@@ -75,10 +84,20 @@ WSGI_APPLICATION = 'djangostore.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+DATABASE_USER = os.environ.get("MONGODB_USER", '')
+DATABASE_PASSWORD = os.environ.get("MONGODB_PW", '')
+DATABASE_NAME = ''
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'djongo',
+        'NAME': DATABASE_NAME,
+        'CLIENT': {
+            'host': 'mongodb+srv://' + DATABASE_USER + ':'+ DATABASE_PASSWORD +'@cluster0.uoece.mongodb.net/'+ DATABASE_NAME +'?retryWrites=true&w=majority',
+            'username': DATABASE_USER,
+            'password': DATABASE_PASSWORD,
+            'authMechanism': 'SCRAM-SHA-1'
+        }
     }
 }
 
