@@ -86,7 +86,7 @@ WSGI_APPLICATION = 'djangostore.wsgi.application'
 
 DATABASE_USER = os.environ.get("MONGODB_USER", '')
 DATABASE_PASSWORD = os.environ.get("MONGODB_PW", '')
-DATABASE_NAME = ''
+DATABASE_NAME = 'items_db'
 
 DATABASES = {
     'default': {
