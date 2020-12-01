@@ -1,9 +1,18 @@
 from django.db import models
+from jsonfield import JSONField
 
-# Create your models here.
+# Seller
+class Seller(models.Model):
+    name = models.CharField(max_length=50)
+    data = JSONField()
 
-class Test(models.Model):
-    value = models.CharField(max_length=60, default='') 
-    
     def __str__(self):
-        return self.value
+        return self.name
+
+# Item
+class Item(models.Model):
+    name = models.CharField(max_length=50)
+    data = JSONField()
+
+    def __str__(self):
+        return self.name
