@@ -3,13 +3,14 @@ from .serializers import ItemSerializer, SellerSerializer
 from .models import Item, Seller
 
 class SearchViewSet(viewsets.ModelViewSet) :
-    queryset = Item.objects.all()
     serializer_class = ItemSerializer
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['name']
 
-class SellerViewSet(viewsets.ModelViewSet) :
-    queryset = Seller.objects.all()
-    serializer_class = SellerSerializer
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['name']
+    def get_queryset(self):
+        queryset = Item.objects.all()
+        sellers = Seller.objects.all()
+        search_word = self.request.query_params.get('q')
+        
+        if search_word is not None:
+            queryset = queryset.filter(name__icontains=search_word)
+
+        return queryset

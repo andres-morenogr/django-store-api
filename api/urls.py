@@ -3,7 +3,7 @@ from rest_framework import routers
 from . import views  
   
 router = routers.DefaultRouter()  
-router.register(r'search', views.SearchViewSet)  
+router.register(r'search', views.SearchViewSet, basename='Search')
   
 urlpatterns = [  
     path('', include(router.urls)),  
