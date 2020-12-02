@@ -1,16 +1,43 @@
 from rest_framework import viewsets, filters
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from .serializers import ItemSerializer, SellerSerializer
 from .models import Item, Seller
 
-class SearchViewSet(viewsets.ModelViewSet) :
-    serializer_class = ItemSerializer
+class SearchResponse(object):
+    def __init__(self, user=None, **args):
+        self.response = {
+            "query": args.get('query', ''),
+            "total": args.get('total', 0),
+            "seller": args.get('seller', {}),
+            "items": args.get('items', [])
+        }
 
-    def get_queryset(self):
-        queryset = Item.objects.all()
-        sellers = Seller.objects.all()
+class SearchViewSet(viewsets.ViewSet) :
+    def list(self, request):
+        itemsQueryset = Item.objects.all()
         search_word = self.request.query_params.get('q')
-        
         if search_word is not None:
-            queryset = queryset.filter(name__icontains=search_word)
-
-        return queryset
+            itemsQueryset = itemsQueryset.filter(name__icontains=search_word)
+        itemsSerializer = ItemSerializer(itemsQueryset, many=True)
+        
+        sellerQueryset = Seller.objects.all()
+        sellerSerializer = SellerSerializer(sellerQueryset, many=True)
+        
+        items = list(map(lambda item : {
+            "id": item["_id"],
+            "name": item["name"],
+            "brand": item["brand"],
+            "thumbnail": item["thumbnail"],
+            "city": item["city"],
+            "price": float(item["price"]),
+            "currency": item["currency"],
+            "rating": float(item["rating"]),
+        }, itemsSerializer.data))
+        seller = sellerSerializer.data[0]
+        return Response({
+            "query": search_word or "",
+            "seller": seller,
+            "total": len(items),
+            "items": items,
+        })

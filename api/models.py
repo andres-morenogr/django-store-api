@@ -11,6 +11,7 @@ class Seller(models.Model):
 
 # Item
 class Item(models.Model):
+    _id = models.CharField(max_length=30)
     name = JSONField()
     thumbnail = JSONField()
     pictures = JSONField()
