@@ -46,43 +46,43 @@ class SearchViewSet(viewsets.ViewSet):
             "items": items,
         })
 
+class ItemResponse(object):
+    def __init__(self, user=None, **args):
+        self.response = {
+            "item": args.get('item', {})
+        }
 
 class ItemViewSet(viewsets.ViewSet):
-
     def retrieve(self, request, pk):
-        itemsQueryset = Item.objects.filter(_id=pk)
+
+        itemsQueryset = Item.objects.all()
+        itemsSerializer = ItemSerializer(itemsQueryset, many=True)
 
         sellerQueryset = Seller.objects.all()
         sellerSerializer = SellerSerializer(sellerQueryset, many=True)
         seller = sellerSerializer.data[0]
 
-        itemsSerializer = ItemSerializer(itemsQueryset, many=True)
-        if(len(itemsSerializer.data) > 0):
-            item = itemsSerializer.data[0]
+        item = None
+        for item_details in itemsSerializer.data:
+            if item_details["_id"] == pk:
+                item = item_details
+                break
+
+        if item is not None:
             res = {
                 "id": item["_id"],
                 "name": item["name"],
                 "brand": item["brand"],
                 "thumbnail": item["thumbnail"],
+                "pictures": item["pictures"],
                 "city": {"name": get_city_name(item["city"]),
                          "code": get_city_code(item["city"])},
                 "seller": seller,
-                "pictures": item["pictures"],
                 "description": item["description"],
                 "price": float(item["price"]),
                 "currency": item["currency"],
                 "rating": float(item["rating"]),
             }
-            return Response(res)
+            return Response(res, 200)
         else:
-            return Response({"msg": "Not Found"}, 404)
-
-    queryset = Item.objects.all()
-    serializer_class = ItemSerializer
-
-
-class UserViewSet(viewsets.ReadOnlyModelViewSet):
-
-    queryset = Item.objects.all()
-    serializer_class = ItemSerializer
-    lookup_field = '_id'
+            return Response({"message": "item not found"}, 404)
