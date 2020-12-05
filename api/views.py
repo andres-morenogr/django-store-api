@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import ItemSerializer, SellerSerializer
 from .models import Item, Seller
-from .utilities import get_city_name, get_city_code
+from .utilities import get_city_name, get_city_code, get_pictures
 
 
 class SearchResponse(object):
@@ -74,7 +74,7 @@ class ItemViewSet(viewsets.ViewSet):
                 "name": item["name"],
                 "brand": item["brand"],
                 "thumbnail": item["thumbnail"],
-                "pictures": item["pictures"],
+                "pictures": get_pictures(item["pictures"]),
                 "city": {"name": get_city_name(item["city"]),
                          "code": get_city_code(item["city"])},
                 "seller": seller,
