@@ -11,3 +11,4 @@ To run tests execute:
 ```bash
 py manage.py test --keepdb
 ```
+Store developed on Django
