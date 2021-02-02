@@ -4,11 +4,11 @@ from .models import Seller
 
 class ViewsTestCase(TestCase):
 
-    def setUp(self):
+    def setUp(self):  # Arrange
         Seller.objects.create(
             name='Django', logo='logo')
 
-    def test_index_loads_properly(self):  # Arrange
+    def test_index_loads_properly(self):
         """The index page loads properly"""
         response = self.client.get('http://localhost:8000/django_api/')  # Act
         self.assertEqual(response.status_code, 200)  # Assert

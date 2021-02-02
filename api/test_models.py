@@ -3,7 +3,7 @@ from .models import Seller
 
 
 class SellerTest(TestCase):
-    """ Test module for Puppy model """
+    """ Test module for Seller model """
 
     def setUp(self):
         Seller.objects.create(
